@@ -5,12 +5,12 @@ This is working as of the 7/Feb/2016. As always with scraping this could easily 
 
 ##About
 A Python Script for Scraping Eircodes and Addresses. Running this script will allow you to slowly download the eircode database (randomly) to a csv file for easy printing of personal non-commercial use.
+
 ## Python Version
 2.7.11 (v2.7.11:6d1b6a68f775, Dec  5 2015, 20:40:30) [MSC v.1500 64 bit (AMD64)]
 
 ## Contents
 1. main.py
-2. eircode.csv
 
 ## Steps
 1. Run 'main.py'
