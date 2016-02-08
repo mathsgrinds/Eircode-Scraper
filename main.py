@@ -36,7 +36,7 @@ def RepresentsLetter(s):
     else:
         return False
 
-def checksum(eircode):
+def check_eircode(eircode):
     try:
         routing_key = eircode.split(" ")[0]
         unique_identifiers = eircode.split(" ")[1]
@@ -57,7 +57,7 @@ def checksum(eircode):
 
 def random_eircode():
     eircode = ""
-    while checksum(eircode) == False:
+    while check_eircode(eircode) == False:
         routing_key = random.sample(pool_of_routing_keys, 1)[0]
         unique_identifier = random.sample(pool_of_unique_identifiers, 1)[0]
         eircode = routing_key+" "+unique_identifier
