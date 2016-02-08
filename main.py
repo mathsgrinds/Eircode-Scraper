@@ -264,7 +264,7 @@ def search():
         add_to_csv(eircode)
         search_unique_identifier(eircode)
 
-def generate_database(n=15):
+def generate_csv(n=15):
     init()
     threads = []
     for x in range(n):
@@ -283,7 +283,7 @@ yes = set(['yes','y', 'ye', ''])
 
 choice = raw_input().lower()
 if choice in yes:
-   generate_database()
+   generate_csv()
 else:
    quit()
 #-------------------------------------------------------------
