@@ -1,7 +1,7 @@
 # Eircode-Scraper
 
 ##Status
-This is working as of the 7/Feb/2016. As always with scraping this could easily break.
+This is working as of the 8/Feb/2016. As always with scraping this could easily break.
 
 ##About
 A Python Script for Scraping Eircodes and Addresses. Running this script will allow you to slowly download the eircode database (randomly) to a csv file for easy printing of personal non-commercial use.
