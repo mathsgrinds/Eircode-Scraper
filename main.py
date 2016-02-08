@@ -23,10 +23,45 @@ def generate_pool(keys=("A41", "A42", "A45", "A63", "A67", "A75", "A81", "A82", 
                 for u4 in "0 1 2 3 4 5 6 7 8 9 A C D E F H K N P R T V W X Y".split(" "):
                     pool_of_unique_identifiers.add(u1+u2+u3+u4)
 
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+def RepresentsLetter(s):
+    if s in "A C D E F H K N P R T V W X Y".split(" "):
+        return True
+    else:
+        return False
+
+def checksum(eircode):
+    try:
+        routing_key = eircode.split(" ")[0]
+        unique_identifiers = eircode.split(" ")[1]
+        keys=("A41", "A42", "A45", "A63", "A67", "A75", "A81", "A82", "A83", "A84", "A85", "A86", "A91", "A92", "A94", "A96", "A98", "C15", "D01", "D02", "D03", "D04", "D05", "D06", "D6W", "D07", "D08", "D09", "D10", "D11", "D12", "D13", "D14", "D15", "D16", "D17", "D18", "D20", "D22", "D24", "E21", "E25", "E32", "E34", "E41", "E45", "E53", "E91", "F12", "F23", "F26", "F28", "F31", "F35", "F42", "F45", "F52", "F56", "F91", "F92", "F93", "F94", "H12", "H14", "H16", "H18", "H23", "H53", "H54", "H62", "H65", "H71", "H91", "K32", "K34", "K36", "K45", "K56", "K67", "K78", "N37", "N39", "N41", "N91", "P12", "P14", "P17", "P24", "P25", "P31", "P32", "P36", "P43", "P47", "P51", "P56", "P61", "P67", "P72", "P75", "P81", "P85", "R14", "R21", "R32", "R35", "R42", "R45", "R51", "R56", "R93", "R95", "T12", "T23", "T34", "T45", "T56", "V14", "V15", "V23", "V31", "V35", "V42", "V92", "V93", "V94", "V95", "W12", "W23", "W34", "W91", "X35", "X42", "X91", "Y14", "Y21", "Y25", "Y34", "Y35")
+        u1 = unique_identifiers[0]
+        u2 = unique_identifiers[1]
+        u3 = unique_identifiers[2]
+        u4 = unique_identifiers[3]
+        if routing_key not in keys:
+            return False
+        if RepresentsInt(u1) and RepresentsInt(u2) and RepresentsInt(u3) and RepresentsInt(u4):
+            return False
+        if RepresentsLetter(u1) and RepresentsLetter(u2) and RepresentsLetter(u3) and RepresentsLetter(u4):
+            return False
+        return True	
+    except:
+        return False
+
 def random_eircode():
-    routing_key = random.sample(pool_of_routing_keys, 1)[0]
-    unique_identifier = random.sample(pool_of_unique_identifiers, 1)[0]
-    return str(routing_key+" "+unique_identifier)
+    eircode = ""
+    while checksum(eircode) == False:
+        routing_key = random.sample(pool_of_routing_keys, 1)[0]
+        unique_identifier = random.sample(pool_of_unique_identifiers, 1)[0]
+        eircode = routing_key+" "+unique_identifier
+    return eircode
 
 def get_address_from_eircode(eircode):
     browser = mechanize.Browser(factory=mechanize.RobustFactory())
@@ -108,13 +143,6 @@ def generate_valid_eircode():
         eircode = random_eircode()
         result = get_address_from_eircode(eircode)
     return eircode
-
-def RepresentsInt(s):
-    try: 
-        int(s)
-        return True
-    except ValueError:
-        return False
 
 def test_address_starts_with_int(address):
     x = address.split(" ")[0]
@@ -249,5 +277,13 @@ def generate_database(n=15):
 #-------------------------------------------------------------
 #------------------------# MAIN #----------------------------#
 #-------------------------------------------------------------
-generate_database()
+print 'This script stores the results of random page browsing to a csv file for later printing of a hardcopy. This file must be deleted by you, the user. By using this script you are agreeing to delete the csv file after printing your personal non-commercial hardcopy. The csv is simply a "printer friendly version of the webpage". The key information from the page is in clear text form and the printer unfriendly material on the page has been stripped clean. BY RUNNING THIS SCRIPT YOU ARE ARGREEING TO DELETE THE CSV FILE AFTER PRINTING. THIS FILE IS A TRANSIENT PRINTER FRIENDLY FILE ONLY. DO YOU ARGEE TO THIS?'
+
+yes = set(['yes','y', 'ye', ''])
+
+choice = raw_input().lower()
+if choice in yes:
+   generate_database()
+else:
+   quit()
 #-------------------------------------------------------------
