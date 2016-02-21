@@ -66,7 +66,7 @@ def random_eircode():
 def get_address_from_eircode(eircode):
     browser = mechanize.Browser(factory=mechanize.RobustFactory())
     url = "http://correctaddress.anpost.ie/pages/Search.aspx"
-    browser.addheaders = [('User-agent', 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.6')]
+    browser.addheaders = [('User-agent', 'Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201')]
     browser.open(url)
     html = browser.response().read()
     browser.select_form(nr=0)
@@ -91,7 +91,7 @@ def get_addresses_from_address(address):
     address = address.replace(leading, "*")
     address = address.replace(eircode, "*")
     url = "http://correctaddress.anpost.ie/pages/Search.aspx"
-    browser.addheaders = [('User-agent', 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.6')]
+    browser.addheaders = [('User-agent','Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201')]
     browser.open(url)
     html = browser.response().read()
     browser.select_form(nr=0)
@@ -116,7 +116,7 @@ def get_addresses_from_address(address):
 def get_eircode_from_address(address):
     browser = mechanize.Browser(factory=mechanize.RobustFactory())
     url = "http://correctaddress.anpost.ie/pages/Search.aspx"
-    browser.addheaders = [('User-agent', 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.6')]
+    browser.addheaders = [('User-agent', 'Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201')]
     browser.open(url)
     html = browser.response().read()
     browser.select_form(nr=0)
@@ -191,14 +191,17 @@ def add_to_csv(eircode):
     if eircode in exclude:
         return False
     else:
-        address = get_address_from_eircode(eircode)
-        if address != "":
-            address = address+", IRELAND"
-            row= '"'+eircode+'","'+address+'"'+"\n"
-            with open(filename,'a') as f: f.write(row)
-            print "ADDED TO CSV FILE: "+row
-            exclude.add(eircode)
-            return True
+        try:
+            address = get_address_from_eircode(eircode)
+            if address != "":
+                address = address+", IRELAND"
+                row= '"'+eircode+'","'+address+'"'+"\n"
+                with open(filename,'a') as f: f.write(row)
+                print "ADDED TO CSV FILE: "+row
+                exclude.add(eircode)
+                return True
+        except:
+            return False
 
 def search_street(address):
     blocks = ["APARTMENT", "UNIT", "FLAT", "SUITE"]
@@ -277,7 +280,7 @@ def generate_csv(n=15):
 #-------------------------------------------------------------
 #------------------------# MAIN #----------------------------#
 #-------------------------------------------------------------
-print 'This script stores the results of random page browsing to a csv file for later printing of a hardcopy. This file must be deleted by you, the user. By using this script you are agreeing to delete the csv file after printing your personal non-commercial hardcopy. The csv is simply a "printer friendly version of the webpage". The key information from the page is in clear text form and the printer unfriendly material on the page has been stripped clean. BY RUNNING THIS SCRIPT YOU ARE ARGREEING TO DELETE THE CSV FILE AFTER PRINTING. THIS FILE IS A TRANSIENT PRINTER FRIENDLY FILE ONLY. DO YOU ARGEE TO THIS?'
+print """Start?"""
 
 yes = set(['yes','y', 'ye', ''])
 
