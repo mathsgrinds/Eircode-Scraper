@@ -7,6 +7,7 @@ import random
 import time
 from bs4 import BeautifulSoup
 import unicodedata
+import re
 
 def generate_pool(keys=("A41", "A42", "A45", "A63", "A67", "A75", "A81", "A82", "A83", "A84", "A85", "A86", "A91", "A92", "A94", "A96", "A98", "C15", "D01", "D02", "D03", "D04", "D05", "D06", "D6W", "D07", "D08", "D09", "D10", "D11", "D12", "D13", "D14", "D15", "D16", "D17", "D18", "D20", "D22", "D24", "E21", "E25", "E32", "E34", "E41", "E45", "E53", "E91", "F12", "F23", "F26", "F28", "F31", "F35", "F42", "F45", "F52", "F56", "F91", "F92", "F93", "F94", "H12", "H14", "H16", "H18", "H23", "H53", "H54", "H62", "H65", "H71", "H91", "K32", "K34", "K36", "K45", "K56", "K67", "K78", "N37", "N39", "N41", "N91", "P12", "P14", "P17", "P24", "P25", "P31", "P32", "P36", "P43", "P47", "P51", "P56", "P61", "P67", "P72", "P75", "P81", "P85", "R14", "R21", "R32", "R35", "R42", "R45", "R51", "R56", "R93", "R95", "T12", "T23", "T34", "T45", "T56", "V14", "V15", "V23", "V31", "V35", "V42", "V92", "V93", "V94", "V95", "W12", "W23", "W34", "W91", "X35", "X42", "X91", "Y14", "Y21", "Y25", "Y34", "Y35")):
     global pool_of_routing_keys
@@ -29,6 +30,12 @@ def RepresentsInt(s):
         return True
     except ValueError:
         return False
+
+def random_user_agent():
+    from random import choice
+    user_agents = ['Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36','Mozilla/5.0 (Windows NT 10.0; WOW64; rv:48.0) Gecko/20100101 Firefox/48.0','Mozilla/5.0 (Windows NT 10.0; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0','Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko','Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36','Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36','Mozilla/5.0 (Windows NT 6.1; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/601.7.7 (KHTML, like Gecko) Version/9.1.2 Safari/601.7.7','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36','Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36']
+    random_user_agent = choice(user_agents)
+    return random_user_agent
 
 def RepresentsLetter(s):
     if s in "A C D E F H K N P R T V W X Y".split(" "):
@@ -66,7 +73,7 @@ def random_eircode():
 def get_address_from_eircode(eircode):
     browser = mechanize.Browser(factory=mechanize.RobustFactory())
     url = "http://correctaddress.anpost.ie/pages/Search.aspx"
-    browser.addheaders = [('User-agent', 'Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201')]
+    browser.addheaders = [('User-agent', random_user_agent() )]
     browser.open(url)
     html = browser.response().read()
     browser.select_form(nr=0)
@@ -91,7 +98,7 @@ def get_addresses_from_address(address):
     address = address.replace(leading, "*")
     address = address.replace(eircode, "*")
     url = "http://correctaddress.anpost.ie/pages/Search.aspx"
-    browser.addheaders = [('User-agent','Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201')]
+    browser.addheaders = [('User-agent',random_user_agent())]
     browser.open(url)
     html = browser.response().read()
     browser.select_form(nr=0)
@@ -116,7 +123,7 @@ def get_addresses_from_address(address):
 def get_eircode_from_address(address):
     browser = mechanize.Browser(factory=mechanize.RobustFactory())
     url = "http://correctaddress.anpost.ie/pages/Search.aspx"
-    browser.addheaders = [('User-agent', 'Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201')]
+    browser.addheaders = [('User-agent', random_user_agent())]
     browser.open(url)
     html = browser.response().read()
     browser.select_form(nr=0)
@@ -144,23 +151,11 @@ def generate_valid_eircode():
         result = get_address_from_eircode(eircode)
     return eircode
 
-def test_address_starts_with_int(address):
-    x = address.split(" ")[0]
-    if RepresentsInt(x):
-        return True
-    else:
-        return False
-
-def test_address_starts_with(address, start):
-    address = address.strip(" ")
-    leader = address.split(", ")[0]
-    x = leader.split(" ")[0]
-    y = leader.split(" ")[-1]
-    if(x == start):
-        if RepresentsInt(y):
-            return True
-        else:
-            return False
+def test_address_contains_int(address):
+    try:
+        return int(re.search(r'\d+',address.replace(get_eircode_from_address(address),"")).group())
+    except:
+        return 0
 
 def load_csv_file(name="eircode"):
     global filename
@@ -178,14 +173,10 @@ def load_csv_file(name="eircode"):
     exclude.remove("Eircode")
     return str(len(exclude))
 
-def fix_csv_file():
-    with open("eircode.csv", 'rb') as f:
-        reader = csv.reader(f, delimiter=',')
-        for row in reader:
-            print str('"'+row[0]+'","'+row[1]+'"'+"\n")
-            if row[1] != "":
-                with open("eircode_fixed.csv", 'a') as g:
-                    g.write(str('"'+row[0]+'","'+row[1]+'"'+"\n"))
+def sort_table(table, cols):
+    for col in reversed(cols):
+        table = sorted(table, key=operator.itemgetter(col))
+    return table
 
 def add_to_csv(eircode):
     if eircode in exclude:
@@ -204,15 +195,14 @@ def add_to_csv(eircode):
             return False
 
 def search_street(address):
-    blocks = ["APARTMENT", "UNIT", "FLAT", "SUITE"]
-    if test_address_starts_with_int(address):
+    x = test_address_contains_int(address)
+    if x != 0:
         last_eircode = ""
         n=0
-        x = address.split(" ")[0]
-        base_address = address.replace(x, "", 1)
+        base_address = address.replace(str(x), "***", 1)
         while True:
             n=n+1
-            address = str(n) + base_address
+            address = base_address.replace("***",str(n))
             eircode = get_eircode_from_address(address)
             address = address.replace(", "+eircode,"")
             if(eircode == "" or eircode == last_eircode):
@@ -220,29 +210,6 @@ def search_street(address):
             else:
                 last_eircode = eircode
             add_to_csv(eircode)
-    else:
-        for start in blocks:
-            if test_address_starts_with(address, start):
-                last_eircode = ""
-                n=0
-                x = address.split(",")[0]
-                base_address = address.replace(x, "", 1)
-                while True:
-                    n=n+1
-                    address = start+" "+str(n)+base_address
-                    eircode = get_eircode_from_address(address)
-                    address = address.replace(", "+eircode,"")
-                    if(eircode == "" or eircode == last_eircode):
-                        break
-                    else:
-                        last_eircode = eircode
-                    add_to_csv(eircode)
-    addresses = get_addresses_from_address(address)
-    if addresses != "" and test_address_starts_with_int(address) == False and start == blocks[-1]:
-        for address in addresses:
-            eircode = get_eircode_from_address(address)
-            if eircode != "":
-                add_to_csv(eircode)
        
 def search_unique_identifier(eircode):
     routing_key = eircode.split(" ")[0]
@@ -280,10 +247,8 @@ def generate_csv(n=15):
 #-------------------------------------------------------------
 #------------------------# MAIN #----------------------------#
 #-------------------------------------------------------------
-print """Start?"""
-
+print "Run? (YES/no)"
 yes = set(['yes','y', 'ye', ''])
-
 choice = raw_input().lower()
 if choice in yes:
    generate_csv()
